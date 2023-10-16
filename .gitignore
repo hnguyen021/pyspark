@@ -1,0 +1,5 @@
+
+*.cache-7
+*.cache-7
+.bash_history
+*.pyc
