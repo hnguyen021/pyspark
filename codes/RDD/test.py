@@ -41,7 +41,4 @@ for (key, value) in output:
 # Đóng SparkContext
 sc.stop()
 
-#test
-
-
 
