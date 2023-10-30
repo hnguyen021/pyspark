@@ -5,7 +5,7 @@ from math import sqrt
 
 def loadMovieNames():
     movieNames = {}
-    with open("movies.dat",  encoding='ascii', errors='ignore') as f:
+    with open("s3://pyspark-datasets/ml-1m/movies.dat",  encoding='ascii', errors='ignore') as f:
         for line in f:
             fields = line.split("::")
             movieNames[int(fields[0])] = fields[1]

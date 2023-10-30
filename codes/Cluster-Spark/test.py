@@ -26,7 +26,7 @@
 # # Stop the SparkContext
 # sc.stop()
 from pyspark import SparkContext
-
+import re
 # Khởi tạo SparkContext
 sc = SparkContext("local", "word_count_example")
 
@@ -42,20 +42,18 @@ text_rdd = sc.parallelize([
     "Cherries are delicious.",
     "Do you like dates or elderberries?"
 ])
-
+pattern = r"[.,/?]"
+words_rdd = text_rdd.flatMap(lambda line: line.split(" "))
+words_rdd = words_rdd.map(lambda word :re.sub(pattern, '', word))
+# words_rdd = words_rdd.collect()
+# print(words_rdd)
 # Sử dụng broadcast variable để đếm số lần xuất hiện của từng từ trong các đoạn văn bản
-word_counts = text_rdd.flatMap(lambda line: line.split(" ")) \
-    .map(lambda word: (word, 1)) \
-    .filter(lambda pair: pair[0] in broadcast_words_to_find.value) \
-    .reduceByKey(lambda a, b: a + b)
+word_counts = words_rdd.filter(lambda word: word in broadcast_words_to_find.value).map(lambda word : (word,1))
+result = word_counts.reduceByKey(lambda x,y :x+y)
+output = result.collect()
+for (key, value) in output:
+    print(f"Word: {key}, Count: {value}")
 
-# Thu thập và in kết quả
-result = word_counts.collect()
-for word, count in result:
-    print(f"{word}: {count}")
-
-# Đừng quên unpersist broadcast variable sau khi sử dụng xong
 broadcast_words_to_find.unpersist()
 
-# Dừng SparkContext
 sc.stop()
