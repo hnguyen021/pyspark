@@ -26,8 +26,8 @@ logsDF = accessLines.select(func.regexp_extract('value', hostExp, 1).alias('host
 logsDF2 = logsDF.withColumn("eventTime", func.current_timestamp())
 
 # Keep a running count of endpoints
-endpointCounts = logsDF2.groupBy(func.window(func.col("eventTime"), \
-      "30 seconds", "10 seconds"), func.col("endpoint")).count()
+window_spec = func.window(func.col("eventTime"),"30 seconds", "10 seconds")
+endpointCounts = logsDF2.groupBy(window_spec, func.col("endpoint")).count()
 
 sortedEndpointCounts = endpointCounts.orderBy(func.col("count").desc())
 

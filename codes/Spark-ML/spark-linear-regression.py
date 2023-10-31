@@ -38,8 +38,7 @@ if __name__ == "__main__":
     # Generate predictions using our linear regression model for all features in our
     # test dataframe:
     fullPredictions = model.transform(testDF).cache()
-    print(type(fullPredictions))
-
+   
     # Extract the predictions and the "known" correct labels.
     predictions = fullPredictions.select("prediction").rdd.map(lambda x: x[0])
     labels = fullPredictions.select("label").rdd.map(lambda x: x[0])
